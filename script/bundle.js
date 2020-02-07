@@ -83,47 +83,65 @@ function _main() {
   _main = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee() {
-    var maxPageNum, title, layers, blobs, h, images, htmlImages, form, i, res;
+    var maxPageNum, title, numtiles, layers, blobs, firstVisibleTiles, h, images, htmlImages, form, i, res;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             maxPageNum = parseInt(document.getElementsByClassName('mb-pageindex')[0].textContent.match(/\d+/ig)[0]);
             title = document.getElementsByTagName('h2')[0].textContent;
+            numtiles = 0;
             layers = getLayers();
             blobs = [];
+            firstVisibleTiles = getVisibleTiles(currentLayer(layers));
+
+          case 6:
+            if (!(firstVisibleTiles.length !== 4 || firstVisibleTiles.length !== 6)) {
+              _context.next = 12;
+              break;
+            }
+
+            _context.next = 9;
+            return sleep(500);
+
+          case 9:
+            firstVisibleTiles = getVisibleTiles(currentLayer(layers));
+            _context.next = 6;
+            break;
+
+          case 12:
+            numtiles = firstVisibleTiles.length;
             h = 0;
 
-          case 5:
+          case 14:
             if (!(h < maxPageNum)) {
-              _context.next = 34;
+              _context.next = 42;
               break;
             }
 
             _context.t0 = getImages;
-            _context.next = 9;
-            return getVisibleTiles(layers);
-
-          case 9:
-            _context.t1 = _context.sent;
-            images = (0, _context.t0)(_context.t1);
-            _context.next = 13;
-            return toHTMLImages(images);
-
-          case 13:
-            htmlImages = _context.sent;
-            console.log("through");
-            _context.t2 = blobs;
             _context.next = 18;
-            return imagesToBlob(htmlImages);
+            return getSameNumVisibleTiles(currentLayer(layers), numtiles);
 
           case 18:
+            _context.t1 = _context.sent;
+            images = (0, _context.t0)(_context.t1);
+            _context.next = 22;
+            return toHTMLImages(images);
+
+          case 22:
+            htmlImages = _context.sent;
+            _context.t2 = blobs;
+            _context.next = 26;
+            return imagesToBlob(htmlImages);
+
+          case 26:
             _context.t3 = _context.sent;
 
             _context.t2.push.call(_context.t2, _context.t3);
 
             if (!(blobs.length % 10 === 0 || h === maxPageNum - 1)) {
-              _context.next = 29;
+              _context.next = 37;
               break;
             }
 
@@ -134,31 +152,31 @@ function _main() {
               form.append('image[]', blobs[i]);
             }
 
-            _context.next = 26;
+            _context.next = 34;
             return fetch('https://dry-depths-08370.herokuapp.com/api/appu', {
               method: 'PUT',
               body: form,
               mode: 'cors'
             });
 
-          case 26:
+          case 34:
             res = _context.sent;
             console.log(res.status);
             blobs = [];
 
-          case 29:
-            _context.next = 31;
+          case 37:
+            _context.next = 39;
             return nextPage();
 
-          case 31:
+          case 39:
             h++;
-            _context.next = 5;
+            _context.next = 14;
             break;
 
-          case 34:
+          case 42:
             alert('ok');
 
-          case 35:
+          case 43:
           case "end":
             return _context.stop();
         }
@@ -310,20 +328,32 @@ function currentLayer(layers) {
   return cLayer;
 }
 
-function getVisibleTiles(_x2) {
-  return _getVisibleTiles.apply(this, arguments);
+function getVisibleTiles(clayer) {
+  var tiles = cLayer.getElementsByTagName('div');
+  var visibleTiles = [];
+
+  for (var i = 0; i < tiles.length; i++) {
+    if (tiles[i].style.visibility === "visible") {
+      visibleTiles.push(tiles[i]);
+    }
+  }
+
+  return visibleTiles;
 }
 
-function _getVisibleTiles() {
-  _getVisibleTiles = _asyncToGenerator(
+function getSameNumVisibleTiles(_x2, _x3) {
+  return _getSameNumVisibleTiles.apply(this, arguments);
+}
+
+function _getSameNumVisibleTiles() {
+  _getSameNumVisibleTiles = _asyncToGenerator(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee4(layers) {
-    var cLayer, tiles, visibleTiles, i;
+  regeneratorRuntime.mark(function _callee4(clayer, numtiles) {
+    var tiles, visibleTiles, i;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            cLayer = currentLayer(layers);
             tiles = cLayer.getElementsByTagName('div');
             visibleTiles = [];
 
@@ -333,57 +363,32 @@ function _getVisibleTiles() {
               }
             }
 
-            console.log(visibleTiles.length);
-
-          case 5:
-            if (!(visibleTiles.length < 4)) {
-              _context4.next = 14;
+            if (!(visibleTiles !== numtiles)) {
+              _context4.next = 9;
               break;
             }
 
-            document.getElementById('btn-zoomin').click();
-            _context4.next = 9;
-            return sleep(3000);
+            _context4.next = 6;
+            return sleep(500);
+
+          case 6:
+            _context4.next = 8;
+            return getSameNumVisibleTiles(clayer, numtiles);
+
+          case 8:
+            return _context4.abrupt("return", _context4.sent);
 
           case 9:
-            _context4.next = 11;
-            return getVisibleTiles(layers);
-
-          case 11:
-            visibleTiles = _context4.sent;
-            _context4.next = 5;
-            break;
-
-          case 14:
-            if (!(visibleTiles.length > 6 || visibleTiles.length == 5)) {
-              _context4.next = 23;
-              break;
-            }
-
-            document.getElementById('btn-zoomout').click();
-            _context4.next = 18;
-            return sleep(3000);
-
-          case 18:
-            _context4.next = 20;
-            return getVisibleTiles(layers);
-
-          case 20:
-            visibleTiles = _context4.sent;
-            _context4.next = 14;
-            break;
-
-          case 23:
             return _context4.abrupt("return", visibleTiles);
 
-          case 24:
+          case 10:
           case "end":
             return _context4.stop();
         }
       }
     }, _callee4);
   }));
-  return _getVisibleTiles.apply(this, arguments);
+  return _getSameNumVisibleTiles.apply(this, arguments);
 }
 
 function getImages(visibleTiles) {
@@ -396,7 +401,7 @@ function getImages(visibleTiles) {
   return images;
 }
 
-function imagesToBlob(_x3) {
+function imagesToBlob(_x4) {
   return _imagesToBlob.apply(this, arguments);
 }
 
