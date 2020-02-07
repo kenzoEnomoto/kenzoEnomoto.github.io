@@ -328,7 +328,7 @@ function currentLayer(layers) {
   return cLayer;
 }
 
-function getVisibleTiles(clayer) {
+function getVisibleTiles(cLayer) {
   var tiles = cLayer.getElementsByTagName('div');
   var visibleTiles = [];
 
@@ -348,7 +348,7 @@ function getSameNumVisibleTiles(_x2, _x3) {
 function _getSameNumVisibleTiles() {
   _getSameNumVisibleTiles = _asyncToGenerator(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee4(clayer, numtiles) {
+  regeneratorRuntime.mark(function _callee4(cLayer, numtiles) {
     var tiles, visibleTiles, i;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
@@ -373,7 +373,7 @@ function _getSameNumVisibleTiles() {
 
           case 6:
             _context4.next = 8;
-            return getSameNumVisibleTiles(clayer, numtiles);
+            return getSameNumVisibleTiles(cLayer, numtiles);
 
           case 8:
             return _context4.abrupt("return", _context4.sent);
