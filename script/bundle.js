@@ -96,52 +96,72 @@ function _main() {
             firstVisibleTiles = getVisibleTiles(currentLayer(layers));
 
           case 6:
-            if (!(firstVisibleTiles.length !== 4 || firstVisibleTiles.length !== 6)) {
-              _context.next = 12;
+            if (!(firstVisibleTiles.length !== 4 && firstVisibleTiles.length !== 6)) {
+              _context.next = 20;
               break;
             }
 
-            _context.next = 9;
-            return sleep(500);
+            if (!(firstVisibleTiles.length < 6)) {
+              _context.next = 13;
+              break;
+            }
 
-          case 9:
+            document.getElementById('btn-zoomin').click();
+            _context.next = 11;
+            return sleep(2000);
+
+          case 11:
+            _context.next = 17;
+            break;
+
+          case 13:
+            if (!(firstVisibleTiles.length > 6)) {
+              _context.next = 17;
+              break;
+            }
+
+            document.getElementById('btn-zoomout').click();
+            _context.next = 17;
+            return sleep(2000);
+
+          case 17:
             firstVisibleTiles = getVisibleTiles(currentLayer(layers));
             _context.next = 6;
             break;
 
-          case 12:
+          case 20:
             numtiles = firstVisibleTiles.length;
             h = 0;
 
-          case 14:
+          case 22:
             if (!(h < maxPageNum)) {
-              _context.next = 42;
+              _context.next = 50;
               break;
             }
 
             _context.t0 = getImages;
-            _context.next = 18;
+            _context.next = 26;
             return getSameNumVisibleTiles(currentLayer(layers), numtiles);
 
-          case 18:
+          case 26:
             _context.t1 = _context.sent;
             images = (0, _context.t0)(_context.t1);
-            _context.next = 22;
+            _context.next = 30;
             return toHTMLImages(images);
 
-          case 22:
+          case 30:
             htmlImages = _context.sent;
             _context.t2 = blobs;
-            _context.next = 26;
+            _context.next = 34;
             return imagesToBlob(htmlImages);
 
-          case 26:
+          case 34:
             _context.t3 = _context.sent;
 
             _context.t2.push.call(_context.t2, _context.t3);
 
             if (!(blobs.length % 10 === 0 || h === maxPageNum - 1)) {
-              _context.next = 37;
+              _context.next = 45;
               break;
             }
 
@@ -152,31 +172,31 @@ function _main() {
               form.append('image[]', blobs[i]);
             }
 
-            _context.next = 34;
+            _context.next = 42;
             return fetch('https://dry-depths-08370.herokuapp.com/api/appu', {
               method: 'PUT',
               body: form,
               mode: 'cors'
             });
 
-          case 34:
+          case 42:
             res = _context.sent;
             console.log(res.status);
             blobs = [];
 
-          case 37:
-            _context.next = 39;
+          case 45:
+            _context.next = 47;
             return nextPage();
 
-          case 39:
+          case 47:
             h++;
-            _context.next = 14;
+            _context.next = 22;
             break;
 
-          case 42:
+          case 50:
             alert('ok');
 
-          case 43:
+          case 51:
           case "end":
             return _context.stop();
         }
@@ -349,39 +369,32 @@ function _getSameNumVisibleTiles() {
   _getSameNumVisibleTiles = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee4(cLayer, numtiles) {
-    var tiles, visibleTiles, i;
+    var visibleTiles;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            tiles = cLayer.getElementsByTagName('div');
-            visibleTiles = [];
+            visibleTiles = getVisibleTiles(cLayer);
 
-            for (i = 0; i < tiles.length; i++) {
-              if (tiles[i].style.visibility === "visible") {
-                visibleTiles.push(tiles[i]);
-              }
-            }
-
-            if (!(visibleTiles !== numtiles)) {
-              _context4.next = 9;
+            if (!(visibleTiles.length !== numtiles)) {
+              _context4.next = 7;
               break;
             }
 
-            _context4.next = 6;
+            _context4.next = 4;
             return sleep(500);
 
-          case 6:
-            _context4.next = 8;
+          case 4:
+            _context4.next = 6;
             return getSameNumVisibleTiles(cLayer, numtiles);
 
-          case 8:
+          case 6:
             return _context4.abrupt("return", _context4.sent);
 
-          case 9:
+          case 7:
             return _context4.abrupt("return", visibleTiles);
 
-          case 10:
+          case 8:
           case "end":
             return _context4.stop();
         }
